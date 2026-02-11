@@ -1,0 +1,9 @@
+title: Start
+---
+// 게임 전체에서 쓸 변수들을 여기서 미리 만들어둡니다.
+<<declare $hasSensor = false>>  // 센서를 훔쳤는가?
+<<declare $knowsTruth = false>> // 형의 비밀을 알았는가?
+
+// 바로 프롤로그로 점프합니다.
+<<jump Prologue_Scene1>>
+===

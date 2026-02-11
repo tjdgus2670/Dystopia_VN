@@ -1,0 +1,100 @@
+title: Prologue_Scene1
+---
+// #1. 렌즈 너머의 세상
+<<set_bg "bg_street_gray">>
+Unknown: 문 밖의 세상은 매캐하고 습기가 가득했다. 우다챠의 하늘은 언제나 회색이다.
+
+Unknown: [AR 렌즈: Type-S] 가동...
+<<set_bg "bg_street_ar">>
+// (여기서 띠링~ 하는 효과음 명령어를 나중에 넣으면 좋습니다)
+System: 보정률 98%. 대기 오염도 삭제. 채도 보정.
+
+Player: 그래, 이게 내가 곧 가게 될 곳... 프라브다의 풍경이야.
+
+Han: 어이, 우등생. 또 그 짓이냐?
+<<set_bg "bg_workshop">>
+<<show_face char_han_smile>>
+Player: 형! 이거 진짜 물건인데요? 해상도가 달라요.
+Han: 당연하지. 프라브다 직수입품이라고.
+
+// ... (중간 대화 생략) ...
+
+Han: 유. 프라브다가 진짜 낙원일 것 같냐?
+Player: 적어도 여기보단 낫겠죠.
+
+// # 미니게임 1: 센서 훔치기 (일단 대화로 처리, 나중에 미니게임 연결)
+// <<start_sensor_minigame>> 같은 명령어를 나중에 만드시면 됩니다.
+Unknown: (수업 시간, 나는 교수님의 눈을 피해 고성능 광학 센서를 주머니에 넣었다.)
+<<set $hasSensor = true>> 
+System: [아이템 획득: 고성능 광학 센서]
+
+<<hide_face>>
+<<jump Prologue_Scene2>>
+===
+
+title: Prologue_Scene2
+---
+// #2. 균열
+<<set_bg "bg_street_gray">>
+Player: (졸업식 전날 밤. 형에게 줄 선물을 들고 가게로 향했다.)
+Player: 아직 불이 켜져 있네. 깜짝 놀라겠지?
+
+// ★ 여기서 아까 만든 도어락(키패드) 퍼즐 등장! ★
+Player: 비밀번호가 뭐였더라... 가게 설립일이었지.
+<<start_hack "1024">> 
+
+// 퍼즐 성공 여부 체크
+<<if $hack_success == true>>
+    Unknown: 삐빅- 잠금이 해제되었습니다.
+    <<jump Prologue_Scene3>>
+<<else>>
+    // 실패하면 다시 시도하거나 강제로 열림 (스토리 진행을 위해)
+    Player: 젠장, 손이 떨려서... 다시 해보자. (그냥 열고 들어간다)
+    <<jump Prologue_Scene3>>
+<<endif>>
+===
+
+title: Prologue_Scene3
+---
+// #3. 사건 현장
+<<set_bg "bg_workshop_blood">>
+Unknown: 문을 열자 비릿한 쇠 냄새와 화약 냄새가 코를 찔렀다.
+
+<<show_face char_gang>>
+Gang: 그러게 물건을 제때 넘겼어야지, 한.
+Player: 형...?
+
+<<show_face char_han_shock>>
+Han: 유? 네가 여긴 왜...! 도망쳐! 쟤는 아무것도 몰라!
+
+// ... (사건 진행) ...
+Unknown: 타앙-!
+<<hide_face>>
+Unknown: 굉음과 함께 형의 몸이 바닥으로 고꾸라졌다.
+Player: 으... 으아....
+
+Gang: 처리해.
+
+<<jump Prologue_End>>
+===
+
+title: Prologue_End
+---
+// #4. 낙원의 붕괴
+<<set_bg "bg_alley_rain">>
+Player: (어떻게 도망쳤는지 기억나지 않는다. 빗물이 고인 쓰레기장에 처박혀 있었다.)
+
+System: [경고: 중범죄 연루 확인. 프라브다 이주권 박탈.]
+Player: 하, 하하.... 10년의 노력이... 5분 만에....
+
+Unknown: 나는 떨리는 손으로 AR 렌즈를 다시 꼈다.
+System: 사용자 인증 실패. 시스템 접근 불가.
+
+Player: (렌즈를 바닥에 던져 발로 짓이겨 버렸다.)
+Player: ...이제 내가 살아야 할 곳은 여기뿐이야.
+
+Unknown: 빛조차 들어오지 않는 우다챠의 가장 깊은 심연... [핫플레이스]를 향해서.
+
+// 챕터 1로 이어짐 (나중에 Chapter1.yarn 만들어서 연결)
+// <<jump Chapter1_Start>> 
+===

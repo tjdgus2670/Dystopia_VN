@@ -1,0 +1,15 @@
+{
+  "projectFileVersion": 3,
+  "sourceFiles": [
+    "start.yarn",
+    "Prologue.yarn"
+  ],
+  "excludeFiles": [
+    "**/*~/*",
+    "./Samples/Yarn Spinner*/*"
+  ],
+  "localisation": {},
+  "baseLanguage": "ko",
+  "compilerOptions": {},
+  "definitionsFiles": []
+}

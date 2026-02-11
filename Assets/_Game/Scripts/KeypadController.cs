@@ -1,79 +1,114 @@
 using System.Collections;
 using UnityEngine;
-using TMPro;            // 텍스트(TMP) 제어용
-using Yarn.Unity;       // Yarn Spinner 연동용
+using TMPro;            
+using Yarn.Unity;       
 
 public class KeypadController : MonoBehaviour
 {
     [Header("UI Components")]
-    public GameObject puzzlePanel;      // 퍼즐 전체 패널
-    public TMP_InputField inputField;   // 비밀번호 입력창
+    public GameObject puzzlePanel;      
+    public TMP_InputField inputField;   
     
-    // 내부 상태 변수
     private string correctPassword;     
     private bool isPuzzleActive = false; 
 
-    // [수정] Awake 대신 Start 사용
     void Start()
     {
-        // DialogueRunner를 찾아서 안전하게 명령어 등록
         var runner = FindObjectOfType<DialogueRunner>();
-        
         if (runner != null)
         {
             runner.AddCommandHandler<string>("start_hack", StartHackRoutine);
-            Debug.Log("[System] KeypadController 명령어(start_hack) 등록 완료");
         }
-        else
+        
+        // 키보드 입력을 스크립트에서 직접 처리하므로 입력창은 읽기 전용으로 유지
+        inputField.readOnly = true; 
+    }
+
+    // [추가된 부분] 매 프레임마다 키보드가 눌렸는지 검사합니다.
+    void Update()
+    {
+        // 퍼즐이 꺼져있으면 키보드 입력을 받지 않음
+        if (!isPuzzleActive) return;
+
+        // 1. 숫자 키 입력 (0~9) - 윗줄 숫자키 & 우측 숫자패드 모두 지원
+        for (int i = 0; i <= 9; i++)
         {
-            Debug.LogError("[Error] DialogueRunner를 찾을 수 없습니다. KeypadController가 작동하지 않습니다.");
+            if (Input.GetKeyDown(KeyCode.Alpha0 + i) || Input.GetKeyDown(KeyCode.Keypad0 + i))
+            {
+                InputNumber(i.ToString());
+            }
+        }
+
+        // 2. 지우기 (Backspace)
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            DeleteNumber();
+        }
+
+        // 3. 엔터 (Enter) - 입력 제출
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            CheckCode();
+        }
+
+        // 4. ESC (취소/닫기) - 원하시면 추가하세요
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ClosePuzzle();
         }
     }
 
-    // Yarn이 이 함수가 끝날 때까지 대기를 타게 만드는 Coroutine
+    // --- 기존 기능들 ---
+    public void InputNumber(string number)
+    {
+        if (inputField.text.Length < 4) 
+        {
+            inputField.text += number;
+        }
+    }
+
+    public void DeleteNumber()
+    {
+        if (inputField.text.Length > 0)
+        {
+            inputField.text = inputField.text.Substring(0, inputField.text.Length - 1);
+        }
+    }
+
     private IEnumerator StartHackRoutine(string password)
     {
-        Debug.Log($"[System] 해킹 시작. 목표 비밀번호: {password}");
-        
-        // 1. 초기화
         correctPassword = password;
         inputField.text = "";           
-        puzzlePanel.SetActive(true);    // UI 켜기
+        puzzlePanel.SetActive(true);    
         isPuzzleActive = true;
 
-        // 2. 대기 (플레이어가 퍼즐을 풀거나 닫을 때까지 무한 루프)
         while (isPuzzleActive)
         {
-            yield return null; // 한 프레임 대기
+            yield return null; 
         }
 
-        // 3. 종료 (루프를 빠져나오면 UI 끄기)
         puzzlePanel.SetActive(false);
-        Debug.Log("[System] 해킹 종료");
     }
 
-    // 제출 버튼에 연결할 함수
     public void CheckCode()
     {
         if (inputField.text == correctPassword)
         {
             Debug.Log("해킹 성공!");
-            // Yarn에 성공했다는 변수를 저장 ($hack_success = true)
             FindObjectOfType<InMemoryVariableStorage>().SetValue("$hack_success", true);
-            isPuzzleActive = false; // 루프 종료 -> 대화 재개
+            isPuzzleActive = false; 
         }
         else
         {
-            Debug.Log("비밀번호 불일치!");
-            inputField.text = ""; // 틀리면 지우기
+            Debug.Log("불일치!");
+            inputField.text = ""; 
         }
     }
 
-    // 닫기 버튼에 연결할 함수
     public void ClosePuzzle()
     {
         Debug.Log("해킹 취소");
         FindObjectOfType<InMemoryVariableStorage>().SetValue("$hack_success", false);
-        isPuzzleActive = false; // 루프 종료 -> 대화 재개
+        isPuzzleActive = false; 
     }
 }
